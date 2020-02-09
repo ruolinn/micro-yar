@@ -52,3 +52,11 @@ func (y *yarTransport) Dial(addr string, opts ...transport.DialOption) (transpor
 func (y *yarTransport) String() string {
 	return "yar"
 }
+
+func (y *yarTransport) Init(...transport.Option) error {
+	return nil
+}
+
+func (y *yarTransport) Options() transport.Options {
+	return y.opts
+}

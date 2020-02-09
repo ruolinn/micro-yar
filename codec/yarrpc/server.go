@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -42,6 +43,7 @@ type serverCodec struct {
 	req    serverRequest
 	packer Packager
 	sync.Mutex
+	// 数据类型更新
 	seq     uint64
 	pending map[uint64]int64
 }
@@ -134,7 +136,7 @@ func (c *serverCodec) ReadHeader(m *codec.Message) error {
 	c.seq++
 	c.pending[c.seq] = c.req.Id
 	c.req.Id = 0
-	m.Id = c.seq
+	m.Id = strconv.FormatInt(int64(c.seq), 10)
 	c.Unlock()
 
 	return nil
@@ -152,7 +154,9 @@ func (c *serverCodec) Write(m *codec.Message, x interface{}) error {
 	var resp serverResponse
 
 	c.Lock()
-	b, ok := c.pending[m.Id]
+	idx, _ := strconv.ParseInt(m.Id, 10, 64)
+	//更新数据类型
+	b, ok := c.pending[uint64(idx)]
 	if !ok {
 		c.Unlock()
 		return errors.New("invalid sequence number in response")

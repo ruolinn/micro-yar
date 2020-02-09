@@ -1,12 +1,13 @@
 package yar
 
 import (
-	"codec/yarrpc"
 	"encoding/binary"
 	"errors"
 	"io"
 	"net"
 	"sync"
+
+	"github.com/ruolinn/micro-yar/codec/yarrpc"
 
 	"github.com/micro/go-micro/transport"
 )
@@ -62,4 +63,12 @@ func (y *yarTransportSocket) Send(m *transport.Message) error {
 	_, err := y.conn.Write(m.Body)
 
 	return err
+}
+
+func (y *yarTransportSocket) Local() string {
+	return ""
+}
+
+func (y *yarTransportSocket) Remote() string {
+	return ""
 }
